@@ -22,11 +22,19 @@
 class vhosts {
 
 	define vhost($vhost, $domain){
-		file{"/var/www/${domain}/":
-			ensure => directory
-		}
-		file{"/var/www/${domain}/${vhost}/":
-			ensure => directory
+		# this is a weird workaround that is needed because recursive creation of
+		# direcotries isn't supported (mkdir -p)
+		if defined(File["/var/www/${domain}/"]) {
+			file{"/var/www/${domain}/${vhost}/":
+				ensure => directory
+			}
+		} else {
+			file{"/var/www/${domain}/":
+				ensure => directory
+			}
+			file{"/var/www/${domain}/${vhost}/":
+				ensure => directory
+			}
 		}
 		file{"/var/www/${domain}/${vhost}/htdocs/":
 			ensure => directory
