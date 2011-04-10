@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ "$#" != 2 ]; then
+	echo "Usage: backup_vhost DOMAIN SUBDOMAIN"
+	exit -1
+fi
+
+if [ ! -d /var/www/$1/$2 ]; then
+	echo "/var/www/$1/$2 doesn't exist"
+	exit -1
+fi
+
+cd /var/www/$1/$2
+
+if [ ! -d /var/www/$1/$2/backup ]; then
+	mkdir /var/www/$1/$2/backup
+fi
+
+DATE=$(date +%Y-%m-%d-%H%M%S)
+tar czf backup/$2.$1-$DATE.tar.gz --exclude=backup .
+chown $2.$1:$2.$1 backup/$2.$1-$DATE.tar.gz
+
+cd -

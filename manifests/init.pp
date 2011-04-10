@@ -21,6 +21,14 @@
 
 class vhosts {
 
+	file{"/usr/local/sbin/backup_vhost":
+		ensure => present,
+		owner => 'root',
+		group => 'root',
+		mode => '700',
+		source => 'puppet:///modules/vhosts/backup_vhost',
+	}
+
 	define vhost($vhost, $domain, $vhost_user=false, $vhost_group=false){
 		if $vhost_user {
 			$user = $vhost_user
@@ -68,6 +76,11 @@ class vhosts {
 		}
 		file{"/var/www/${domain}/${vhost}/logs/":
 			ensure => directory,
+		}
+		cron{"${vhost}.${domain}_backup":
+			command => "perl -e 'sleep rand 1800';/usr/local/sbin/backup_vhost ${domain} ${vhost}",
+			user => "root",
+			minute => fqdn_rand(60)
 		}
 	}
 }
