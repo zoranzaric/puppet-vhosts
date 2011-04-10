@@ -69,6 +69,11 @@ class vhosts {
 				group => "${group}",
 			}
 		}
+		file{"/var/www/${domain}/${vhost}/configs/":
+			ensure => directory,
+			owner => "root",
+			group => "root",
+		}
 		file{"/var/www/${domain}/${vhost}/htdocs/":
 			ensure => directory,
 			owner => "${user}",
