@@ -47,9 +47,10 @@ class vhosts {
 			home => "/var/www/${domain}/${vhost}/",
 		}
 
-		group{"$group":
-			ensure => present,
-		}
+		# this is isn't needed with debian
+		# group{"$group":
+		# 	ensure => present,
+		# }
 
 		# this is a weird workaround that is needed because recursive creation of
 		# direcotries isn't supported (mkdir -p)
