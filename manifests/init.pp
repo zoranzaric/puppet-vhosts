@@ -29,7 +29,7 @@ class vhosts {
 		source => 'puppet:///modules/vhosts/backup_vhost',
 	}
 
-	define vhost($vhost, $domain, $vhost_user=false, $vhost_group=false){
+	define vhost($vhost, $domain, $vhost_user=false, $vhost_group=false, $aliases=[], $catchall=false, $packages=[]){
 		if $vhost_user {
 			$user = $vhost_user
 		} else {
@@ -87,6 +87,22 @@ class vhosts {
 			command => "perl -e 'sleep rand 1800';/usr/local/sbin/backup_vhost ${domain} ${vhost}",
 			user => "root",
 			minute => fqdn_rand(60)
+		}
+
+		apache::vhost { "${vhost}.${domain}":
+			vhost => "${vhost}",
+			domain => "${domain}",
+			aliases => $aliases,
+			catchall => $catchall,
+			packages => $packages
+		}
+
+		nginx::vhost { "${vhost}.${domain}":
+			vhost => "${vhost}",
+			domain => "${domain}",
+			aliases => $aliases,
+			catchall => $catchall,
+			packages => $packages
 		}
 	}
 }
